@@ -64,7 +64,7 @@ test('labels.yml entries have a unique name, a 6-hex color and a description', (
   assert.deepEqual(problems, []);
 });
 
-test('every issue-form label is declared', { todo: 'fixed by U1' }, () => {
+test('every issue-form label is declared', () => {
   const applied = [];
   for (const file of yamlFiles(ISSUE_TEMPLATE_DIR).filter((f) => !/^config\.ya?ml$/.test(f))) {
     const form = loadWorkflow(join(ISSUE_TEMPLATE_DIR, file));
