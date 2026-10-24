@@ -311,8 +311,10 @@ is in [MAINTAINERS.md](MAINTAINERS.md).
 
 - **Automated** — Go build/test/lint/`govulncheck` (`go.yml`), Helm chart
   lint/unittest (`chart-test.yaml`), Codecov patch/project coverage, and the
-  DCO bot all run on every push to the PR, and workflow lint
-  (`workflow-lint.yaml`: actionlint and zizmor) runs when `.github/` changes.
+  DCO bot all run on every push to the PR. When `.github/` changes, workflow
+  lint (`workflow-lint.yaml`: actionlint and zizmor) and workflow tests
+  (`workflow-tests.yaml`: unit tests for the scripts inside workflows, the
+  workflow security rules, and the label list in `.github/labels.yml`) run too.
   The `PR title` check (`pr-title.yaml`) runs when the PR is opened, pushed
   to, or edited.
 - **Human** — adherence to the provider/engine boundary, test coverage on new

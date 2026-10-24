@@ -199,7 +199,7 @@ underlying tools with CI-specific flags, which are close to but not
 identical to the local `make` targets.
 
 Pull request checks run on the `pull-request/<n>` branch that copy-pr-bot
-pushes for each PR; the first three also run on `main`:
+pushes for each PR; the first four also run on `main`:
 
 - `.github/workflows/go.yml`: build; `go test -v -coverpkg=./... -coverprofile=coverage.out -covermode=atomic ./...`
   (coverage-instrumented, but _without_ `-race`, unlike `make test`);
@@ -212,6 +212,10 @@ pushes for each PR; the first three also run on `main`:
   weekly and on demand so zizmor's online audits catch new advisories
   against pinned actions. actionlint fails the run on any finding; zizmor
   uploads its security findings to code scanning without failing the run
+- `.github/workflows/workflow-tests.yaml`: when `.github/**` changes, plus on
+  demand, `node --test '.github/tests/**/*.test.mjs'`: unit tests for the
+  scripts inside workflows, the security rules every workflow keeps, and the
+  check that every label a form or workflow applies is in `.github/labels.yml`
 - `.github/workflows/chart-test.yaml`: `make chart-test`
 - `.github/workflows/k8s-test.yaml`: Kubernetes integration tests (kind +
   KWOK); can also be run manually
@@ -266,6 +270,15 @@ would otherwise fail the run:
 ```bash
 actionlint -shellcheck= -pyflakes=
 GH_TOKEN="$(gh auth token)" zizmor --no-exit-codes .
+```
+
+To run the workflow tests as CI does, run this from the repository root. It
+needs Node 22 or later, the version on `ubuntu-latest`, and
+[yq](https://github.com/mikefarah/yq) v4 on `PATH`; no npm install is needed.
+Keep the glob quoted so that Node expands it, not the shell:
+
+```bash
+node --test '.github/tests/**/*.test.mjs'
 ```
 
 `make qualify` and `make chart-test` (when charts changed) passing locally
