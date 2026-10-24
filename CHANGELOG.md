@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - `workflow-tests.yaml` runs unit tests for the scripts inside GitHub workflows.
 
+### Changed
+
+- The issue template chooser no longer offers blank issues, and its links now point to NVIDIA PSIRT for security reports, `docs/community.md` for questions, and the documentation site. The feature request form applies `enhancement` instead of `feature request`, both documentation forms apply `documentation` instead of `doc`, a new Question form applies `question`, and every form also applies `needs-triage`.
+
+### Removed
+
+- The Markdown issue templates `documentation-request.md` and `submit-question.md`. The two documentation forms and the Question form replace them.
+
 ### Fixed
 
 - Helm node-observer's `generateTopologyUrl` now prints an integer `service.port` as a number. An integer port, such as `--set service.port=8080`, previously produced an invalid URL ending in `:%!f(int64=8080)/v1/generate`.

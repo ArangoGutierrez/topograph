@@ -38,3 +38,7 @@
 - name: question
   color: "d876e3"
   description: "Further information is requested"
+
+- name: needs-triage
+  color: "fbca04"
+  description: "New issue a maintainer has not triaged yet"
