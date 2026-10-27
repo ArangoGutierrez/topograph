@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Helm node-observer's `generateTopologyUrl` now prints an integer `service.port` as a number. An integer port, such as `--set service.port=8080`, previously produced an invalid URL ending in `:%!f(int64=8080)/v1/generate`.
+
 ## [v1.1.0] - 2026-10-23
 
 ### Added
