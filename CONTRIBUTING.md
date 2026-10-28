@@ -346,6 +346,13 @@ If you haven't heard anything after 5 business days:
 3. For a stalled issue rather than a PR, check the
    [Topograph roadmap](https://github.com/orgs/dsx-ai-factory/projects/6) to see if it's already being tracked there.
 
+If your PR stops merging cleanly into `main`, the Merge Conflict Check
+workflow (`conflict-check.yaml`) adds the `needs-rebase` label and comments
+once to ask you to resolve the conflicts. Rebase onto the latest `main`, or
+merge `main` into your branch, and push. The check runs after every push to
+`main`, so the label comes off on the first run that finds the PR merges
+cleanly, not when you push the fix. Draft PRs are not checked.
+
 Keep the PR in draft while you're still reshaping it — draft PRs don't page
 reviewers, so that's the cheapest phase to rework history or force-push in.
 Once a PR is open for review, prefer pushing new commits over amending or

@@ -42,3 +42,6 @@
 - name: needs-triage
   color: "fbca04"
   description: "New issue a maintainer has not triaged yet"
+- name: needs-rebase
+  color: "e11d21"
+  description: "Conflicts with main; the author needs to rebase or merge main"
