@@ -1,10 +1,11 @@
-# Copyright (c) 2024, NVIDIA CORPORATION.  All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -136,28 +137,31 @@ qualify: fmt vet lint test
 mod:
 	go mod tidy
 
-# License headers, through addlicense at a pinned version. New headers use the
-# standard NVIDIA SPDX and Apache 2.0 notice in scripts/license-header.tmpl;
-# the check accepts any existing copyright or license header, so older forms
-# keep passing.
-# Files are listed through git, so untracked trees such as localdev/ and other
-# worktrees are never walked; `grep -v '/$$'` drops nested repositories, which
-# git lists as directories. vendor/, testdata/ and the helm-unittest snapshots
-# are skipped. Helm templates are skipped by license-headers only: a `#` header
-# renders into the manifest, so they carry a {{/* */}} header added by hand,
-# which the check still recognizes.
+# License headers, through addlicense at a pinned version, over the files git
+# tracks (`git add` a new file first). New headers use the standard NVIDIA SPDX
+# and Apache 2.0 notice in scripts/license-header.tmpl. Helm templates take that
+# header by hand as a {{- /* */ -}} comment, since a `#` comment renders into
+# the manifest.
+# addlicense accepts any copyright header and skips .tpl and NOTES.txt, so the
+# check also greps for chart files without the header and for the two older
+# NVIDIA forms. The older-form grep is transitional: it stops branches cut
+# before the headers were standardized from bringing those forms back, and can
+# be removed once those pull requests have merged or been rebased.
 ADDLICENSE ?= go run github.com/google/addlicense@v1.2.0
-LICENSE_HEADER_FILES = git ls-files --cached --others --exclude-standard | grep -v '/$$'
-LICENSE_HEADER_IGNORE := -ignore 'vendor/**' -ignore '**/testdata/**' -ignore '**/__snapshot__/**'
+LICENSE_HEADER_OLD := Copyright (\(c\) )?[0-9-]+,? NVIDIA CORPORATION([.]|[[:space:]]*$$)
 
 .PHONY: license-headers
 license-headers:
-	$(LICENSE_HEADER_FILES) | xargs $(ADDLICENSE) -f scripts/license-header.tmpl \
-	  $(LICENSE_HEADER_IGNORE) -ignore 'charts/topograph/templates/**'
+	git ls-files -z | xargs -0 $(ADDLICENSE) -f scripts/license-header.tmpl \
+	  -ignore 'charts/topograph/templates/**'
 
 .PHONY: license-header-check
 license-header-check:
-	$(LICENSE_HEADER_FILES) | xargs $(ADDLICENSE) -check $(LICENSE_HEADER_IGNORE)
+	git ls-files -z | xargs -0 $(ADDLICENSE) -check
+	@! git grep -l -E '$(LICENSE_HEADER_OLD)' || \
+	  { echo "Replace these older NVIDIA headers with scripts/license-header.tmpl, keeping the year."; exit 1; }
+	@! git grep -L 'SPDX-FileCopyrightText' -- 'charts/*/templates/*.tpl' 'charts/*/templates/NOTES.txt' || \
+	  { echo "Add the license header to these Helm files."; exit 1; }
 
 .PHONY: coverage
 coverage: test
